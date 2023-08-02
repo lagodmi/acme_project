@@ -2,8 +2,8 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 
-# Импортируем класс модели Birthday.
-from .models import Birthday
+# Импортируем модель поздравления.
+from .models import Birthday, Congratulation
 
 
 BEATLES = {'Джон Леннон', 'Пол Маккартни', 'Джордж Харрисон', 'Ринго Старр'}
@@ -17,8 +17,7 @@ class BirthdayForm(forms.ModelForm):
     class Meta:
         # Указываем модель, на основе которой должна строиться форма.
         model = Birthday
-        # Указываем, что надо отобразить все поля.
-        fields = '__all__'
+        exclude = ('author',)
         widgets = {
             'birthday': forms.DateInput(attrs={'type': 'date'})
         }
@@ -29,7 +28,7 @@ class BirthdayForm(forms.ModelForm):
         # Разбиваем полученную строку по пробелам
         # и возвращаем только первое имя.
         return first_name.split()[0]
- 
+
     def clean(self):
         super().clean()
         first_name = self.cleaned_data['first_name']
@@ -46,4 +45,11 @@ class BirthdayForm(forms.ModelForm):
             )
             raise ValidationError(
                 'Мы тоже любим Битлз, но введите, пожалуйста, настоящее имя!'
-            ) 
+            )
+
+
+class CongratulationForm(forms.ModelForm):
+ 
+    class Meta:
+        model = Congratulation
+        fields = ('text',)
